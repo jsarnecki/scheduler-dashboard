@@ -29,15 +29,29 @@ const data = [
 class Dashboard extends Component {
 
   state = { 
-    loading: false
+    loading: false,
+    focused: null
   }
 
-  render() {
-    const dashboardClasses = classnames("dashboard");
+  selectPanel(id) {
+    this.setState({
+     focused: id
+    });
+   }
 
-    const mappedPanels = data.map(panel => {
-      return <Panel key={panel.id} id={panel.id} label={panel.label} value={panel.value} />;
-    })
+  render() {
+    const dashboardClasses = classnames("dashboard", {
+      "dashboard--focused": this.state.focused
+     });
+
+
+    const mappedPanels = data
+      .filter(panel => {
+        return this.state.focused === null || this.state.focused === panel.id;
+      })
+      .map(panel => {
+        return <Panel key={panel.id} id={panel.id} label={panel.label} value={panel.value} onSelect={this.selectPanel} />;
+      });
 
     if(this.state.loading) {
       return <Loading />;
